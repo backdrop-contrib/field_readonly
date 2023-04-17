@@ -29,7 +29,7 @@ function field_readonly_field_attach_form($entity_type, $entity, &$form, &$form_
   }
 
   // Display non-accessible fields as read-only items.
-  $entity_id = entity_id($entity_type, $entity);
+  $entity_id = $entity->id();
   if ($entity_id && entity_access('view', $entity_type, $entity) || !$entity_id && field_readonly_view_new_entity_support($entity_type, $entity) && entity_access('view', $entity_type, $entity)) {
     if (!$entity_id) {
       $entity = clone $entity;
@@ -37,15 +37,13 @@ function field_readonly_field_attach_form($entity_type, $entity, &$form, &$form_
       $key = isset($info['entity keys']['name']) ? $info['entity keys']['name'] : $info['entity keys']['id'];
       $entity_id = $entity->$key = FALSE;
     }
-    $build = entity_view($entity_type, array($entity), 'field_readonly');
+    $build = entity_view($entity, 'field_readonly');
     if (!$build) {
       return;
     }
-    $build = reset($build);
-    $build = $build[$entity_id];
 
     // Iterate on each field instance.
-    list(, , $bundle) = entity_extract_ids($entity_type, $entity);
+    $bundle = $entity->bundle();
     $instances = field_info_instances($entity_type, $bundle);
     $extra_fields = field_info_extra_fields($entity_type, $bundle, 'form');
     foreach (array_merge(array_keys($instances), array_keys($extra_fields)) as $field_name) {
@@ -67,7 +65,7 @@ function field_readonly_field_attach_form($entity_type, $entity, &$form, &$form_
     }
 
     if (!empty($attach_css)) {
-      $form['#attached']['css'][] = drupal_get_path('module', 'field_readonly') . '/field_readonly.css';
+      $form['#attached']['css'][] = backdrop_get_path('module', 'field_readonly') . '/field_readonly.css';
     }
   }
 }

@@ -1,5 +1,5 @@
 name = Field Readonly
 description = Displays non-accessible fields in edit forms as read-only items.
-dependencies[] = entity
 package = Fields
-core = 7.x
+backdrop = 1.x
+type = module
